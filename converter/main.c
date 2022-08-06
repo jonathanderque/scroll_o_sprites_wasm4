@@ -42,6 +42,29 @@ void extract_sprite(
 	}
 }
 
+////
+//// C
+////
+void emit_c_header(FILE* fp) {
+	fprintf(fp, "#include <stdint.h>\n\n");
+	fprintf(fp, "#define SOS_WIDTH %i\n", SPRITE_WIDTH);
+	fprintf(fp, "#define SOS_HEIGHT %i\n", SPRITE_HEIGHT);
+	fprintf(fp, "#define SOS_FLAGS BLIT_1BPP\n\n");
+}
+
+void emit_c_sprite(FILE* fp, const char *name, unsigned char *sprite) {
+	int i;
+	fprintf(fp, "const uint8_t %s[%i] = {" , name, SPRITE_LEN);
+	for (i = 0; i < SPRITE_LEN; i++) {
+		if (i > 0) {
+			fprintf(fp, ",");
+		}
+		fprintf(fp, "0x%x", sprite[i]);
+	}
+	fprintf(fp, "};\n");
+}
+
+
 void emit_zig_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 	int i;
 	fprintf(fp, "const %s = [%i]u8{", name, SPRITE_LEN);
@@ -72,19 +95,31 @@ int main() {
 
 	printf("INFO: processing sprites...\n");
 	{
+		FILE *c_fp;
 		FILE *zig_fp;
 		int i =0;
 
+		c_fp = fopen("../scroll_o_sprite/c/scroll_o_sprite.c", "w");
+		if (c_fp == NULL) {
+			goto clean_fp;
+		}
 		zig_fp = fopen("../scroll_o_sprite/zig/scroll_o_sprite.zig", "w");
 		if (zig_fp == NULL) {
 			goto clean_fp;
 		}
+
+		emit_c_header(c_fp);
+
 		while (sprite_list[i].name != NULL) {
 			extract_sprite(data, x, n, sprite, sprite_list[i].x, sprite_list[i].y);
+			emit_c_sprite(c_fp, sprite_list[i].name, sprite);
 			emit_zig_sprite(zig_fp, sprite_list[i].name, sprite);
 			i++;
 		}
 clean_fp:
+		if (c_fp != NULL) {
+			fclose(c_fp);
+		}
 		if (zig_fp != NULL) {
 			fclose(zig_fp);
 		}
