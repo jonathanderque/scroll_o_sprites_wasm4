@@ -64,6 +64,14 @@ void emit_c_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 	fprintf(fp, "};\n");
 }
 
+////
+//// Zig
+////
+void emit_zig_header(FILE* fp) {
+	fprintf(fp, "const sos_width = %i;\n", SPRITE_WIDTH);
+	fprintf(fp, "const sos_height = %i;\n", SPRITE_HEIGHT);
+	fprintf(fp, "const sos_flags = 0; // BLIT_1BPP\n\n");
+}
 
 void emit_zig_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 	int i;
@@ -109,6 +117,7 @@ int main() {
 		}
 
 		emit_c_header(c_fp);
+		emit_zig_header(zig_fp);
 
 		while (sprite_list[i].name != NULL) {
 			extract_sprite(data, x, n, sprite, sprite_list[i].x, sprite_list[i].y);
