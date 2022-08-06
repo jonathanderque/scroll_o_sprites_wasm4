@@ -8,6 +8,7 @@
 #define SOS_D_PATH "../scroll_o_sprites/d/scroll_o_sprites.d"
 #define SOS_GO_PATH "../scroll_o_sprites/go/scroll_o_sprites.go"
 #define SOS_NELUA_PATH "../scroll_o_sprites/nelua/scroll_o_sprites.nelua"
+#define SOS_NIM_PATH "../scroll_o_sprites/nim/scroll_o_sprites.nim"
 #define SOS_PNG_PATH "../scroll_o_sprites/png/scroll_o_sprites.png"
 #define SOS_ZIG_PATH "../scroll_o_sprites/zig/scroll_o_sprites.zig"
 
@@ -156,6 +157,30 @@ void emit_nelua_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 }
 
 ////
+//// Nim
+////
+void emit_nim_header(FILE* fp) {
+	fprintf(fp, "const sosWidth = %i\n", SPRITE_WIDTH);
+	fprintf(fp, "const sosHeight = %i\n", SPRITE_HEIGHT);
+	fprintf(fp, "const sosFlags = 0 # BLIT_1BPP\n\n");
+}
+
+void emit_nim_sprite(FILE* fp, const char *name, unsigned char *sprite) {
+	int i;
+	fprintf(fp, "var %s: array[%i, uint8] = [" , name, SPRITE_LEN);
+	for (i = 0; i < SPRITE_LEN; i++) {
+		if (i > 0) {
+			fprintf(fp, ",");
+		}
+		fprintf(fp, "0x%x", sprite[i]);
+		if (i == 0) {
+			fprintf(fp, "'u8");
+		}
+	}
+	fprintf(fp, "]\n");
+}
+
+////
 //// Zig
 ////
 void emit_zig_header(FILE* fp) {
@@ -199,6 +224,7 @@ int main() {
 		FILE *d_fp;
 		FILE *go_fp;
 		FILE *nelua_fp;
+		FILE *nim_fp;
 		FILE *zig_fp;
 		int i =0;
 
@@ -222,6 +248,10 @@ int main() {
 		if (nelua_fp == NULL) {
 			goto clean_fp;
 		}
+		nim_fp = fopen(SOS_NIM_PATH, "w");
+		if (nim_fp == NULL) {
+			goto clean_fp;
+		}
 		zig_fp = fopen(SOS_ZIG_PATH, "w");
 		if (zig_fp == NULL) {
 			goto clean_fp;
@@ -232,6 +262,7 @@ int main() {
 		emit_d_header(d_fp);
 		emit_go_header(go_fp);
 		emit_nelua_header(nelua_fp);
+		emit_nim_header(nim_fp);
 		emit_zig_header(zig_fp);
 
 		while (sprite_list[i].name != NULL) {
@@ -242,6 +273,7 @@ int main() {
 			emit_d_sprite(d_fp, sprite_list[i].name, sprite);
 			emit_go_sprite(go_fp, sprite_list[i].name, sprite);
 			emit_nelua_sprite(nelua_fp, sprite_list[i].name, sprite);
+			emit_nim_sprite(nim_fp, sprite_list[i].name, sprite);
 			emit_zig_sprite(zig_fp, sprite_list[i].name, sprite);
 
 			i++;
@@ -261,6 +293,9 @@ clean_fp:
 		}
 		if (nelua_fp != NULL) {
 			fclose(nelua_fp);
+		}
+		if (nim_fp != NULL) {
+			fclose(nim_fp);
 		}
 		if (zig_fp != NULL) {
 			fclose(zig_fp);
