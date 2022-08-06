@@ -1,4 +1,4 @@
-const sos = @import("scroll_o_sprite.zig");
+const sos = @import("scroll_o_sprites.zig");
 
 const Sprite = struct { name: []const u8, sprite: [*]const u8 };
 

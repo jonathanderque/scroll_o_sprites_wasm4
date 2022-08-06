@@ -1,5 +1,5 @@
 const w4 = @import("wasm4.zig");
-const sprites = @import("scroll_o_sprite.zig");
+const sprites = @import("scroll_o_sprites.zig");
 const sprite_list = @import("sprite_list.zig");
 
 const cursor16 = [_]u8{

@@ -1,6 +1,6 @@
 BEGIN {
 	FS=",";
-	print "const sos = @import(\"scroll_o_sprite.zig\");"
+	print "const sos = @import(\"scroll_o_sprites.zig\");"
 	print
 	print "const Sprite = struct { name: []const u8, sprite: [*]const u8 };"
 	print

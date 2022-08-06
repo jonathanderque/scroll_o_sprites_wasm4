@@ -3,8 +3,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define SOS_PATH "../scroll_o_sprite/png/scroll_o_sprite.png"
-//#define SOS_PATH "../scroll_o_sprite/png/small.png"
+#define SOS_C_PATH "../scroll_o_sprites/c/scroll_o_sprites.c"
+#define SOS_PNG_PATH "../scroll_o_sprites/png/scroll_o_sprites.png"
+#define SOS_ZIG_PATH "../scroll_o_sprites/zig/scroll_o_sprites.zig"
+
 #define SPRITE_WIDTH 16
 #define SPRITE_HEIGHT 16
 #define SPRITE_LEN (SPRITE_HEIGHT * SPRITE_WIDTH / 8)
@@ -93,7 +95,7 @@ int main() {
 
 
 	printf("INFO: loading scroll-o-sprites png ...\n");
-	data =stbi_load(SOS_PATH, &x, &y, &n, 0);
+	data = stbi_load(SOS_PNG_PATH, &x, &y, &n, 0);
 	if (data == NULL) {
 		printf("ERROR: could not load scroll-o-sprites png. exiting.\n");
 		return 1;
@@ -107,11 +109,11 @@ int main() {
 		FILE *zig_fp;
 		int i =0;
 
-		c_fp = fopen("../scroll_o_sprite/c/scroll_o_sprite.c", "w");
+		c_fp = fopen(SOS_C_PATH, "w");
 		if (c_fp == NULL) {
 			goto clean_fp;
 		}
-		zig_fp = fopen("../scroll_o_sprite/zig/scroll_o_sprite.zig", "w");
+		zig_fp = fopen(SOS_ZIG_PATH, "w");
 		if (zig_fp == NULL) {
 			goto clean_fp;
 		}
