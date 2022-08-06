@@ -9,6 +9,7 @@
 #define SOS_GO_PATH "../scroll_o_sprites/go/scroll_o_sprites.go"
 #define SOS_NELUA_PATH "../scroll_o_sprites/nelua/scroll_o_sprites.nelua"
 #define SOS_NIM_PATH "../scroll_o_sprites/nim/scroll_o_sprites.nim"
+#define SOS_ODIN_PATH "../scroll_o_sprites/odin/scroll_o_sprites.odin"
 #define SOS_PNG_PATH "../scroll_o_sprites/png/scroll_o_sprites.png"
 #define SOS_ZIG_PATH "../scroll_o_sprites/zig/scroll_o_sprites.zig"
 
@@ -181,6 +182,28 @@ void emit_nim_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 }
 
 ////
+//// Odin
+////
+void emit_odin_header(FILE* fp) {
+	fprintf(fp, "package scroll_o_sprites\n\n");
+	fprintf(fp, "sos_width : u32 : %i\n", SPRITE_WIDTH);
+	fprintf(fp, "sos_height : u32 : %i\n", SPRITE_HEIGHT);
+	fprintf(fp, "sos_flags : w4.Blit_Flags : nil // BLIT_1BPP\n\n");
+}
+
+void emit_odin_sprite(FILE* fp, const char *name, unsigned char *sprite) {
+	int i;
+	fprintf(fp, "%s:= [%i]u8 {" , name, SPRITE_LEN);
+	for (i = 0; i < SPRITE_LEN; i++) {
+		if (i > 0) {
+			fprintf(fp, ",");
+		}
+		fprintf(fp, "0x%x", sprite[i]);
+	}
+	fprintf(fp, "}\n");
+}
+
+////
 //// Zig
 ////
 void emit_zig_header(FILE* fp) {
@@ -225,6 +248,7 @@ int main() {
 		FILE *go_fp;
 		FILE *nelua_fp;
 		FILE *nim_fp;
+		FILE *odin_fp;
 		FILE *zig_fp;
 		int i =0;
 
@@ -252,6 +276,10 @@ int main() {
 		if (nim_fp == NULL) {
 			goto clean_fp;
 		}
+		odin_fp = fopen(SOS_ODIN_PATH, "w");
+		if (odin_fp == NULL) {
+			goto clean_fp;
+		}
 		zig_fp = fopen(SOS_ZIG_PATH, "w");
 		if (zig_fp == NULL) {
 			goto clean_fp;
@@ -263,6 +291,7 @@ int main() {
 		emit_go_header(go_fp);
 		emit_nelua_header(nelua_fp);
 		emit_nim_header(nim_fp);
+		emit_odin_header(odin_fp);
 		emit_zig_header(zig_fp);
 
 		while (sprite_list[i].name != NULL) {
@@ -274,6 +303,7 @@ int main() {
 			emit_go_sprite(go_fp, sprite_list[i].name, sprite);
 			emit_nelua_sprite(nelua_fp, sprite_list[i].name, sprite);
 			emit_nim_sprite(nim_fp, sprite_list[i].name, sprite);
+			emit_odin_sprite(odin_fp, sprite_list[i].name, sprite);
 			emit_zig_sprite(zig_fp, sprite_list[i].name, sprite);
 
 			i++;
@@ -296,6 +326,9 @@ clean_fp:
 		}
 		if (nim_fp != NULL) {
 			fclose(nim_fp);
+		}
+		if (odin_fp != NULL) {
+			fclose(odin_fp);
 		}
 		if (zig_fp != NULL) {
 			fclose(zig_fp);
