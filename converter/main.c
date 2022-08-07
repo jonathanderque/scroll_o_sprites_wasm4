@@ -12,6 +12,7 @@
 #define SOS_ODIN_PATH "../scroll_o_sprites/odin/scroll_o_sprites.odin"
 #define SOS_PORTH_PATH "../scroll_o_sprites/porth/scroll_o_sprites.porth"
 #define SOS_PNG_PATH "../scroll_o_sprites/png/scroll_o_sprites.png"
+#define SOS_ROLAND_PATH "../scroll_o_sprites/roland/scroll_o_sprites.rol"
 #define SOS_ZIG_PATH "../scroll_o_sprites/zig/scroll_o_sprites.zig"
 
 #define SPRITE_WIDTH 16
@@ -223,6 +224,27 @@ void emit_porth_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 }
 
 ////
+//// Roland
+////
+void emit_roland_header(FILE* fp) {
+	fprintf(fp, "const SOS_WIDTH: u32 = %i;\n", SPRITE_WIDTH);
+	fprintf(fp, "const SOS_HEIGHT: u32 = %i;\n", SPRITE_HEIGHT);
+	fprintf(fp, "const SOS_FLAGS: u32 = 0; // BLIT_1BPP\n\n");
+}
+
+void emit_roland_sprite(FILE* fp, const char *name, unsigned char *sprite) {
+	int i;
+	fprintf(fp, "const %s: [u8; %i] = [", name, SPRITE_LEN);
+	for (i = 0; i < SPRITE_LEN; i++) {
+		if (i > 0) {
+			fprintf(fp, ",");
+		}
+		fprintf(fp, "0x%x", sprite[i]);
+	}
+	fprintf(fp, "];\n");
+}
+
+////
 //// Zig
 ////
 void emit_zig_header(FILE* fp) {
@@ -269,6 +291,7 @@ int main() {
 		FILE *nim_fp;
 		FILE *odin_fp;
 		FILE *porth_fp;
+		FILE *roland_fp;
 		FILE *zig_fp;
 		int i =0;
 
@@ -304,6 +327,10 @@ int main() {
 		if (porth_fp == NULL) {
 			goto clean_fp;
 		}
+		roland_fp = fopen(SOS_ROLAND_PATH, "w");
+		if (roland_fp == NULL) {
+			goto clean_fp;
+		}
 		zig_fp = fopen(SOS_ZIG_PATH, "w");
 		if (zig_fp == NULL) {
 			goto clean_fp;
@@ -317,6 +344,7 @@ int main() {
 		emit_nim_header(nim_fp);
 		emit_odin_header(odin_fp);
 		emit_porth_header(porth_fp);
+		emit_roland_header(roland_fp);
 		emit_zig_header(zig_fp);
 
 		while (sprite_list[i].name != NULL) {
@@ -330,6 +358,7 @@ int main() {
 			emit_nim_sprite(nim_fp, sprite_list[i].name, sprite);
 			emit_odin_sprite(odin_fp, sprite_list[i].name, sprite);
 			emit_porth_sprite(porth_fp, sprite_list[i].name, sprite);
+			emit_roland_sprite(roland_fp, sprite_list[i].name, sprite);
 			emit_zig_sprite(zig_fp, sprite_list[i].name, sprite);
 
 			i++;
@@ -358,6 +387,9 @@ clean_fp:
 		}
 		if (porth_fp != NULL) {
 			fclose(porth_fp);
+		}
+		if (roland_fp != NULL) {
+			fclose(roland_fp);
 		}
 		if (zig_fp != NULL) {
 			fclose(zig_fp);
