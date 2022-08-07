@@ -16,6 +16,7 @@
 #define SOS_PNG_PATH "../scroll_o_sprites/png/scroll_o_sprites.png"
 #define SOS_ROLAND_PATH "../scroll_o_sprites/roland/scroll_o_sprites.rol"
 #define SOS_RUST_PATH "../scroll_o_sprites/rust/scroll_o_sprites.rs"
+#define SOS_WAT_PATH "../scroll_o_sprites/wat/scroll_o_sprites.wat"
 #define SOS_ZIG_PATH "../scroll_o_sprites/zig/scroll_o_sprites.zig"
 
 #define SPRITE_WIDTH 16
@@ -276,6 +277,25 @@ void emit_rust_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 }
 
 ////
+//// Wat
+////
+void emit_wat_header(FILE* fp) {
+	fprintf(fp, ";; sos_width = %i\n", SPRITE_WIDTH);
+	fprintf(fp, ";; sos_height = %i\n", SPRITE_HEIGHT);
+	fprintf(fp, ";; sos_flags = 0 // BLIT_1BPP\n\n");
+}
+
+void emit_wat_sprite(FILE* fp, const char *name, unsigned char *sprite) {
+	int i;
+	fprintf(fp, ";; %s\n", name);
+	fprintf(fp, "(data\n  (i32.const 0)\n  \"");
+	for (i = 0; i < SPRITE_LEN; i++) {
+		fprintf(fp, "\\%.2x", sprite[i]);
+	}
+	fprintf(fp, "\"\n)\n\n");
+}
+
+////
 //// Zig
 ////
 void emit_zig_header(FILE* fp) {
@@ -324,6 +344,7 @@ int main() {
 		FILE *porth_fp;
 		FILE *roland_fp;
 		FILE *rust_fp;
+		FILE *wat_fp;
 		FILE *zig_fp;
 		int i =0;
 
@@ -367,6 +388,10 @@ int main() {
 		if (rust_fp == NULL) {
 			goto clean_fp;
 		}
+		wat_fp = fopen(SOS_WAT_PATH, "w");
+		if (wat_fp == NULL) {
+			goto clean_fp;
+		}
 		zig_fp = fopen(SOS_ZIG_PATH, "w");
 		if (zig_fp == NULL) {
 			goto clean_fp;
@@ -382,6 +407,7 @@ int main() {
 		emit_porth_header(porth_fp);
 		emit_roland_header(roland_fp);
 		emit_rust_header(rust_fp);
+		emit_wat_header(wat_fp);
 		emit_zig_header(zig_fp);
 
 		while (sprite_list[i].name != NULL) {
@@ -397,6 +423,7 @@ int main() {
 			emit_porth_sprite(porth_fp, sprite_list[i].name, sprite);
 			emit_roland_sprite(roland_fp, sprite_list[i].name, sprite);
 			emit_rust_sprite(rust_fp, sprite_list[i].name, sprite);
+			emit_wat_sprite(wat_fp, sprite_list[i].name, sprite);
 			emit_zig_sprite(zig_fp, sprite_list[i].name, sprite);
 
 			i++;
@@ -431,6 +458,9 @@ clean_fp:
 		}
 		if (rust_fp != NULL) {
 			fclose(rust_fp);
+		}
+		if (wat_fp != NULL) {
+			fclose(wat_fp);
 		}
 		if (zig_fp != NULL) {
 			fclose(zig_fp);
