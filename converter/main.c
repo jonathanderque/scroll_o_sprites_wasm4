@@ -10,6 +10,7 @@
 #define SOS_NELUA_PATH "../scroll_o_sprites/nelua/scroll_o_sprites.nelua"
 #define SOS_NIM_PATH "../scroll_o_sprites/nim/scroll_o_sprites.nim"
 #define SOS_ODIN_PATH "../scroll_o_sprites/odin/scroll_o_sprites.odin"
+#define SOS_PORTH_PATH "../scroll_o_sprites/porth/scroll_o_sprites.porth"
 #define SOS_PNG_PATH "../scroll_o_sprites/png/scroll_o_sprites.png"
 #define SOS_ZIG_PATH "../scroll_o_sprites/zig/scroll_o_sprites.zig"
 
@@ -204,6 +205,24 @@ void emit_odin_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 }
 
 ////
+//// Porth
+////
+void emit_porth_header(FILE* fp) {
+	fprintf(fp, "const sos-width %i end\n", SPRITE_WIDTH);
+	fprintf(fp, "const sos-height %i end\n", SPRITE_HEIGHT);
+	fprintf(fp, "const sos-flags 0 end // BLIT_1BPP\n\n");
+}
+
+void emit_porth_sprite(FILE* fp, const char *name, unsigned char *sprite) {
+	int i;
+	fprintf(fp, "const %s \"" , name);
+	for (i = 0; i < SPRITE_LEN; i++) {
+		fprintf(fp, "\\\\%x", sprite[i]);
+	}
+	fprintf(fp, "\"c end\n");
+}
+
+////
 //// Zig
 ////
 void emit_zig_header(FILE* fp) {
@@ -249,6 +268,7 @@ int main() {
 		FILE *nelua_fp;
 		FILE *nim_fp;
 		FILE *odin_fp;
+		FILE *porth_fp;
 		FILE *zig_fp;
 		int i =0;
 
@@ -280,6 +300,10 @@ int main() {
 		if (odin_fp == NULL) {
 			goto clean_fp;
 		}
+		porth_fp = fopen(SOS_PORTH_PATH, "w");
+		if (porth_fp == NULL) {
+			goto clean_fp;
+		}
 		zig_fp = fopen(SOS_ZIG_PATH, "w");
 		if (zig_fp == NULL) {
 			goto clean_fp;
@@ -292,6 +316,7 @@ int main() {
 		emit_nelua_header(nelua_fp);
 		emit_nim_header(nim_fp);
 		emit_odin_header(odin_fp);
+		emit_porth_header(porth_fp);
 		emit_zig_header(zig_fp);
 
 		while (sprite_list[i].name != NULL) {
@@ -304,6 +329,7 @@ int main() {
 			emit_nelua_sprite(nelua_fp, sprite_list[i].name, sprite);
 			emit_nim_sprite(nim_fp, sprite_list[i].name, sprite);
 			emit_odin_sprite(odin_fp, sprite_list[i].name, sprite);
+			emit_porth_sprite(porth_fp, sprite_list[i].name, sprite);
 			emit_zig_sprite(zig_fp, sprite_list[i].name, sprite);
 
 			i++;
@@ -329,6 +355,9 @@ clean_fp:
 		}
 		if (odin_fp != NULL) {
 			fclose(odin_fp);
+		}
+		if (porth_fp != NULL) {
+			fclose(porth_fp);
 		}
 		if (zig_fp != NULL) {
 			fclose(zig_fp);
