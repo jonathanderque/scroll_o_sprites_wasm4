@@ -7,6 +7,9 @@ The Scroll-o-sprites by Quale contains 250+ sprites licensed under CC-BY-3.0. Wh
 This repository also includes a simple sprite viewer allowing to easily identify the sprite you want in the code library.
 
 
+<img src="img/scroll_o_sprite_viewer.png" width=320 />
+
+
 ## Launching the sprite viewer
 
 Run the following
