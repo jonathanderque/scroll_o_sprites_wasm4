@@ -238,7 +238,7 @@ void emit_roland_header(FILE* fp) {
 
 void emit_roland_sprite(FILE* fp, const char *name, unsigned char *sprite) {
 	int i;
-	fprintf(fp, "const %s: [u8; %i] = [", name, SPRITE_LEN);
+	fprintf(fp, "static %s: [u8; %i] = [", name, SPRITE_LEN);
 	for (i = 0; i < SPRITE_LEN; i++) {
 		if (i > 0) {
 			fprintf(fp, ",");
