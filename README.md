@@ -1,11 +1,16 @@
-# About this repository
+# Scroll-O-Sprite for WASM-4
 
-This repository contains sprites from the Scroll-o-sprites already converted to code for consumption in your [WASM-4](https://wasm4.org) games.
+This repository contains sprites from the [Scroll-o-sprites](https://i.imgur.com/F0BBFcy.png) already converted to source code for consumption in your [WASM-4](https://wasm4.org) games.
 
 The Scroll-o-sprites by Quale contains 250+ sprites licensed under CC-BY-3.0. While the [original site](https://quale-art.blogspot.com) no longer seems available, there is an [imgur album](https://imgur.com/a/uHx4k) containing the sprite sheet and some examples.
 
 This repository also includes a simple sprite viewer allowing to easily identify the sprite you want in the code library.
 
+## Status
+
+* all of the sprites are extracted/available
+* the font is currently not available
+* sprite content is available as AssemblyScript, C, D, Go, Nelua, Nim, Odin, Porth, Roland, Rust, Wasm WAT, Zig source files.
 
 <img src="img/scroll_o_sprite_viewer.png" width=320 />
 
