@@ -84,7 +84,7 @@ export fn update() void {
     w4.DRAW_COLORS.* = 2;
     w4.text("SCROLL-O-SPRITES", 16, 10);
     w4.DRAW_COLORS.* = 3;
-    w4.text("SCROLL-O-SPRITES", 16, 09);
+    w4.text("SCROLL-O-SPRITES", 16, 9);
     w4.DRAW_COLORS.* = 2;
 
     // draw viewport aka list of sprites
@@ -92,9 +92,9 @@ export fn update() void {
     var i: isize = 0;
     while (i < viewport_length) : (i += 1) {
         if (i + state.viewport_offset < sprite_list.sprites.len) {
-            const x: i32 = @mod(@intCast(i32, i), viewport_width);
-            const y: i32 = @divFloor(@intCast(i32, i), viewport_width);
-            w4.blit(sprite_list.sprites[@intCast(usize, i + state.viewport_offset)].sprite, viewport_x_offset + (16 * x), viewport_y_offset + (16 * y), 16, 16, w4.BLIT_1BPP);
+            const x: i32 = @mod(@as(i32, @intCast(i)), viewport_width);
+            const y: i32 = @divFloor(@as(i32, @intCast(i)), viewport_width);
+            w4.blit(sprite_list.sprites[@intCast(i + state.viewport_offset)].sprite, viewport_x_offset + (16 * x), viewport_y_offset + (16 * y), 16, 16, w4.BLIT_1BPP);
             if (i + state.viewport_offset == state.cursor_index) {
                 w4.DRAW_COLORS.* = 3;
                 w4.blit(&cursor16, viewport_x_offset + (16 * x), viewport_y_offset + (16 * y), 16, 16, w4.BLIT_1BPP);
@@ -114,7 +114,7 @@ export fn update() void {
 
     // draw sprite name
     w4.DRAW_COLORS.* = 2;
-    const name = sprite_list.sprites[@intCast(usize, state.cursor_index)].name;
-    const label_x: i32 = @divTrunc(160 - (@intCast(i32, name.len) * 8), 2);
+    const name = sprite_list.sprites[@intCast(state.cursor_index)].name;
+    const label_x: i32 = @divTrunc(160 - (@as(i32, @intCast(name.len)) * 8), 2);
     w4.text(name, label_x, viewport_y_offset + (viewport_height + 1) * 16);
 }
